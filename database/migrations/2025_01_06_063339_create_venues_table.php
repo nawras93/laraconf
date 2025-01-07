@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('state');
             $table->string('country');
             $table->string('zip');
+            $table->string('region');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
