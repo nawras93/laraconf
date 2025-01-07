@@ -30,6 +30,7 @@ class Venue extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'deleted_at' => 'timestamp',
     ];
 
     public function conferences(): HasMany

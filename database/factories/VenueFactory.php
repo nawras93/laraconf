@@ -26,6 +26,7 @@ class VenueFactory extends Factory
             'state' => $this->faker->word(),
             'country' => $this->faker->country(),
             'zip' => $this->faker->postcode(),
+            'deleted_at' => $this->faker->dateTime(),
         ];
     }
 }

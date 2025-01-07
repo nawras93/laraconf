@@ -29,6 +29,7 @@ class Speaker extends Model
      */
     protected $casts = [
         'id' => 'integer',
+        'deleted_at' => 'timestamp',
     ];
 
     public function conferences(): BelongsToMany

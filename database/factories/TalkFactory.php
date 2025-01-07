@@ -25,6 +25,7 @@ class TalkFactory extends Factory
             'title' => $this->faker->sentence(4),
             'abstract' => $this->faker->text(),
             'speaker_id' => Speaker::factory(),
+            'deleted_at' => $this->faker->dateTime(),
         ];
     }
 }

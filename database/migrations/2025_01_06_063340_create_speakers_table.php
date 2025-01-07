@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('venues', function (Blueprint $table) {
+        Schema::create('speakers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('city');
-            $table->string('state');
-            $table->string('country');
-            $table->string('zip');
+            $table->string('email');
+            $table->text('bio');
+            $table->string('twitter_handle');
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('venues');
+        Schema::dropIfExists('speakers');
     }
 };

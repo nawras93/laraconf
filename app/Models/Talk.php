@@ -30,6 +30,7 @@ class Talk extends Model
     protected $casts = [
         'id' => 'integer',
         'speaker_id' => 'integer',
+        'deleted_at' => 'timestamp',
     ];
 
     public function speaker(): BelongsTo
