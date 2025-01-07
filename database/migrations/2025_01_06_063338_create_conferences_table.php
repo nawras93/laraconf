@@ -19,7 +19,7 @@ return new class extends Migration
             $table->dateTime('end_date');
             $table->boolean('is_published')->default(false);
             $table->string('status');
-            $table->string('region');
+            $table->string('region')->nullable();
             $table->foreignId('venue_id')->nullable();
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();

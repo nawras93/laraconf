@@ -2,8 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Conference;
+use App\Models\Speaker;
+use App\Models\Talk;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Venue;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,7 +17,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        Speaker::factory(10)->create();
+        Talk::factory(10)->create();
+        Venue::factory(10)->create()->each(function ($venue) {
+            Conference::factory()->create(['region' => $venue->region, 'venue_id' => $venue->id]);
+        });
 
         User::factory()->create([
             'name' => 'Admin',

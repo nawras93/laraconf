@@ -7,7 +7,6 @@ use App\Filament\Resources\ConferenceResource\Pages;
 use App\Filament\Resources\ConferenceResource\RelationManagers;
 use App\Models\Conference;
 use App\Models\Venue;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -24,52 +23,7 @@ class ConferenceResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->label('Conference Name')
-                    ->placeholder('My Conference')
-//                    ->default('My Conference')
-//                    ->hint('The name of the conference')
-//                    ->hintIcon('heroicon-o-information-circle')
-//                    ->prefix('Conference Name')
-//                    ->prefixIcon('heroicon-o-identification')
-                    ->required()
-//                    ->markAsRequired(false)
-//                    ->rules()
-                    ->maxLength(255),
-                Forms\Components\RichEditor::make('description')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('start_date')
-                    ->native(false)
-                    ->required(),
-                Forms\Components\DateTimePicker::make('end_date')
-                    ->required(),
-                Forms\Components\Toggle::make('is_published')
-                    ->default(false),
-                Forms\Components\Select::make('status')
-                    ->required()
-                    ->options([
-                        'draft' => 'Draft',
-                        'published' => 'Published',
-                        'cancelled' => 'Cancelled',
-                    ]),
-                Forms\Components\Select::make('region')
-                    ->required()
-                    ->live()
-                    ->searchable()
-                    ->preload(true)
-                    ->enum(Region::class)
-                    ->options(Region::class),
-                Forms\Components\Select::make('venue_id')
-                    ->searchable()
-                    ->preload(true)
-                    ->createOptionForm(Venue::getForm())
-                    ->editOptionForm(Venue::getForm())
-                    ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
-                        return $query->where('region', $get('region'));
-                    }),
-            ]);
+            ->schema(Conference::getForm());
     }
 
     public static function table(Table $table): Table

@@ -14,6 +14,7 @@ class Venue extends Model
 {
     use HasFactory;
 
+
     /**
      * The attributes that are mass assignable.
      *
