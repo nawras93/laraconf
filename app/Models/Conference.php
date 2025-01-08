@@ -13,6 +13,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms;
 
 class Conference extends Model
@@ -76,14 +78,7 @@ class Conference extends Model
                                 ->columnSpanFull()
                                 ->label('Conference Name')
                                 ->placeholder('My Conference')
-    //                    ->default('My Conference')
-    //                    ->hint('The name of the conference')
-    //                    ->hintIcon('heroicon-o-information-circle')
-    //                    ->prefix('Conference Name')
-    //                    ->prefixIcon('heroicon-o-identification')
                                 ->required()
-    //                    ->markAsRequired(false)
-    //                    ->rules()
                                 ->maxLength(255),
                             RichEditor::make('description')
                                 ->columnSpanFull()
@@ -128,71 +123,26 @@ class Conference extends Model
                                     return $query->where('region', $get('region'));
                                 }),
                         ]),
-
             ]),
-//            Forms\Components\Section::make('Conference Details')
-//                ->columns(2)
-//                ->collapsible()
-//                ->schema([
-//                    TextInput::make('name')
-//                        ->columnSpanFull()
-//                        ->label('Conference Name')
-//                        ->placeholder('My Conference')
-////                    ->default('My Conference')
-////                    ->hint('The name of the conference')
-////                    ->hintIcon('heroicon-o-information-circle')
-////                    ->prefix('Conference Name')
-////                    ->prefixIcon('heroicon-o-identification')
-//                        ->required()
-////                    ->markAsRequired(false)
-////                    ->rules()
-//                        ->maxLength(255),
-//                    RichEditor::make('description')
-//                        ->columnSpanFull()
-//                        ->required()
-//                        ->maxLength(255),
-//                    DateTimePicker::make('start_date')
-//                        ->native(false)
-//                        ->required(),
-//                    DateTimePicker::make('end_date')
-//                        ->native(false)
-//                        ->required(),
-//                    Forms\Components\Fieldset::make('Status')
-//                        ->columns(1)
-//                        ->schema([
-//                            Select::make('status')
-//                                ->required()
-//                                ->options([
-//                                    'draft' => 'Draft',
-//                                    'published' => 'Published',
-//                                    'cancelled' => 'Cancelled',
-//                                ]),
-//                            Toggle::make('is_published')
-//                                ->default(false),
-//                        ])
-//                ]),
-//            Forms\Components\Section::make('Location')
-//                ->columns(2)
-//                ->schema([
-//                    Select::make('region')
-//                        ->required()
-//                        ->live()
-//                        ->searchable()
-//                        ->preload(true)
-//                        ->enum(Region::class)
-//                        ->options(Region::class),
-//                    Select::make('venue_id')
-//                        ->searchable()
-//                        ->preload(true)
-//                        ->createOptionForm(Venue::getForm())
-//                        ->editOptionForm(Venue::getForm())
-//                        ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
-//                            return $query->where('region', $get('region'));
-//                        }),
-//                ]),
-//            Forms\Components\CheckboxList::make('speakers')
-//                ->relationship('speakers', 'name')
-//                ->required(),
+            Actions::make([
+                Action::make('star')
+                    ->visible(function (string $operation) {
+                        if($operation !== 'create') {
+                            return false;
+                        }
+                        if (! app()->environment('local')) {
+                            return false;
+                        }
+                        return true;
+                    })
+                    ->label('Fill form with factory data')
+                    ->icon('heroicon-m-star')
+//                    ->requiresConfirmation()
+                    ->action(function ($livewire) {
+                        $data = Conference::factory()->make()->toArray();
+                        $livewire->form->fill($data);
+                    }),
+            ]),
         ];
     }
 }
