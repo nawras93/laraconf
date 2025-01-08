@@ -66,53 +66,133 @@ class Conference extends Model
     public static function getForm(): array
     {
         return [
-            TextInput::make('name')
-                ->label('Conference Name')
-                ->placeholder('My Conference')
-//                    ->default('My Conference')
-//                    ->hint('The name of the conference')
-//                    ->hintIcon('heroicon-o-information-circle')
-//                    ->prefix('Conference Name')
-//                    ->prefixIcon('heroicon-o-identification')
-                ->required()
-//                    ->markAsRequired(false)
-//                    ->rules()
-                ->maxLength(255),
-            RichEditor::make('description')
-                ->required()
-                ->maxLength(255),
-            DateTimePicker::make('start_date')
-                ->native(false)
-                ->required(),
-            DateTimePicker::make('end_date')
-                ->required(),
-            Toggle::make('is_published')
-                ->default(false),
-            Select::make('status')
-                ->required()
-                ->options([
-                    'draft' => 'Draft',
-                    'published' => 'Published',
-                    'cancelled' => 'Cancelled',
-                ]),
-            Select::make('region')
-                ->required()
-                ->live()
-                ->searchable()
-                ->preload(true)
-                ->enum(Region::class)
-                ->options(Region::class),
-            Select::make('venue_id')
-                ->searchable()
-                ->preload(true)
-                ->createOptionForm(Venue::getForm())
-                ->editOptionForm(Venue::getForm())
-                ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
-                    return $query->where('region', $get('region'));
-                }),
-            Forms\Components\CheckboxList::make('speakers')
-                ->relationship('speakers', 'name')
-                ->required(),
+            Forms\Components\Tabs::make()
+                ->columnSpanFull()
+                ->tabs([
+                    Forms\Components\Tabs\Tab::make('Conference Details')
+                        ->columns(2)
+                        ->schema([
+                            TextInput::make('name')
+                                ->columnSpanFull()
+                                ->label('Conference Name')
+                                ->placeholder('My Conference')
+    //                    ->default('My Conference')
+    //                    ->hint('The name of the conference')
+    //                    ->hintIcon('heroicon-o-information-circle')
+    //                    ->prefix('Conference Name')
+    //                    ->prefixIcon('heroicon-o-identification')
+                                ->required()
+    //                    ->markAsRequired(false)
+    //                    ->rules()
+                                ->maxLength(255),
+                            RichEditor::make('description')
+                                ->columnSpanFull()
+                                ->required()
+                                ->maxLength(255),
+                            DateTimePicker::make('start_date')
+                                ->native(false)
+                                ->required(),
+                            DateTimePicker::make('end_date')
+                                ->native(false)
+                                ->required(),
+                            Forms\Components\Fieldset::make('Status')
+                                ->columns(1)
+                                ->schema([
+                                    Select::make('status')
+                                        ->required()
+                                        ->options([
+                                            'draft' => 'Draft',
+                                            'published' => 'Published',
+                                            'cancelled' => 'Cancelled',
+                                        ]),
+                                    Toggle::make('is_published')
+                                        ->default(false),
+                                ])
+                        ]),
+                    Forms\Components\Tabs\Tab::make('Location')
+                        ->columns(2)
+                        ->schema([
+                            Select::make('region')
+                                ->required()
+                                ->live()
+                                ->searchable()
+                                ->preload(true)
+                                ->enum(Region::class)
+                                ->options(Region::class),
+                            Select::make('venue_id')
+                                ->searchable()
+                                ->preload(true)
+                                ->createOptionForm(Venue::getForm())
+                                ->editOptionForm(Venue::getForm())
+                                ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
+                                    return $query->where('region', $get('region'));
+                                }),
+                        ]),
+
+            ]),
+//            Forms\Components\Section::make('Conference Details')
+//                ->columns(2)
+//                ->collapsible()
+//                ->schema([
+//                    TextInput::make('name')
+//                        ->columnSpanFull()
+//                        ->label('Conference Name')
+//                        ->placeholder('My Conference')
+////                    ->default('My Conference')
+////                    ->hint('The name of the conference')
+////                    ->hintIcon('heroicon-o-information-circle')
+////                    ->prefix('Conference Name')
+////                    ->prefixIcon('heroicon-o-identification')
+//                        ->required()
+////                    ->markAsRequired(false)
+////                    ->rules()
+//                        ->maxLength(255),
+//                    RichEditor::make('description')
+//                        ->columnSpanFull()
+//                        ->required()
+//                        ->maxLength(255),
+//                    DateTimePicker::make('start_date')
+//                        ->native(false)
+//                        ->required(),
+//                    DateTimePicker::make('end_date')
+//                        ->native(false)
+//                        ->required(),
+//                    Forms\Components\Fieldset::make('Status')
+//                        ->columns(1)
+//                        ->schema([
+//                            Select::make('status')
+//                                ->required()
+//                                ->options([
+//                                    'draft' => 'Draft',
+//                                    'published' => 'Published',
+//                                    'cancelled' => 'Cancelled',
+//                                ]),
+//                            Toggle::make('is_published')
+//                                ->default(false),
+//                        ])
+//                ]),
+//            Forms\Components\Section::make('Location')
+//                ->columns(2)
+//                ->schema([
+//                    Select::make('region')
+//                        ->required()
+//                        ->live()
+//                        ->searchable()
+//                        ->preload(true)
+//                        ->enum(Region::class)
+//                        ->options(Region::class),
+//                    Select::make('venue_id')
+//                        ->searchable()
+//                        ->preload(true)
+//                        ->createOptionForm(Venue::getForm())
+//                        ->editOptionForm(Venue::getForm())
+//                        ->relationship('venue', 'name', modifyQueryUsing: function (Builder $query, Forms\Get $get) {
+//                            return $query->where('region', $get('region'));
+//                        }),
+//                ]),
+//            Forms\Components\CheckboxList::make('speakers')
+//                ->relationship('speakers', 'name')
+//                ->required(),
         ];
     }
 }
