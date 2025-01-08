@@ -9,10 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Filament\Forms;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class Venue extends Model
+class Venue extends Model Implements HasMedia
 {
-    use HasFactory;
+    use HasFactory, InteractsWithMedia;
 
 
     /**
@@ -48,9 +50,19 @@ class Venue extends Model
     public static function getForm(): array
     {
         return [
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
             TextInput::make('city')
                 ->required()
                 ->maxLength(255),
+            Forms\Components\SpatieMediaLibraryFileUpload::make('images')
+                ->collection('venue-images')
+                ->label('Images')
+                ->multiple()
+                ->image()
+                ->maxSize(1024 * 1024 * 20) // 20 MB
+                ->columnSpan(2),
             TextInput::make('state')
                 ->required()
                 ->maxLength(255),

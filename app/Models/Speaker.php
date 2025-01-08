@@ -19,6 +19,7 @@ class Speaker extends Model
      */
     protected $fillable = [
         'name',
+        'avatar',
         'email',
         'bio',
         'qualifications',
@@ -41,12 +42,17 @@ class Speaker extends Model
         return $this->belongsToMany(Conference::class);
     }
 
-    protected static function getForm()
+    public static function getForm(): array
     {
         return [
             TextInput::make('name')
                 ->required()
                 ->maxLength(255),
+            Forms\Components\FileUpload::make('avatar')
+                ->avatar()
+                ->imageEditor()
+                ->maxSize(1024 * 1024 * 20) // 2MB
+                ->columnSpanFull(),
             TextInput::make('email')
                 ->email()
                 ->required()
