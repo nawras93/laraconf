@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\TalkLength;
 use App\Filament\Resources\TalkResource\Pages;
 use App\Filament\Resources\TalkResource\RelationManagers;
 use App\Models\Talk;
@@ -9,9 +10,11 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Str;
 
 class TalkResource extends Resource
 {
@@ -29,6 +32,9 @@ class TalkResource extends Resource
                 Forms\Components\Textarea::make('abstract')
                     ->required()
                     ->columnSpanFull(),
+                Forms\Components\Select::make('length')
+                    ->options(TalkLength::class)
+                    ->required(),
                 Forms\Components\Select::make('speaker_id')
                     ->relationship('speaker', 'name')
                     ->required(),
@@ -40,22 +46,36 @@ class TalkResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
-                    ->searchable(),
+                    ->sortable()
+                    ->searchable()
+                    ->description(function (Talk $record) {
+                        return Str::of($record->abstract)->limit(50);
+                    }),
+                ImageColumn::make('speaker.avatar')
+                    ->label('Avatar')
+                    ->circular()
+                    ->defaultImageUrl(function (Talk $record) {
+                        return 'https://ui-avatars.com/api/?name=' . urlencode($record->speaker->name) . '&color=7F9CF5&background=EBF4FF';
+                    }),
                 Tables\Columns\TextColumn::make('speaker.name')
+                    ->label('Speaker')
                     ->numeric()
+                    ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
+                Tables\Columns\ToggleColumn::make('new_talk'),
+                Tables\Columns\TextColumn::make('status')
+//                    ->format(function (Talk $record) {
+//                        return $record->status->value;
+//                    })
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->searchable()
+                    ->badge()
+                    ->color(fn ($state) => $state->getColor()),
+                Tables\Columns\IconColumn::make('length')
+                    ->icon(fn ($state) => $state->getIcon())
+                    ->label('Length')
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->searchable(),
             ])
             ->filters([
                 //

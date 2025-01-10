@@ -37,9 +37,22 @@ class Speaker extends Model
         'qualifications' => 'array',
     ];
 
+    const QUALIFICATIONS = [
+        'Doctor of Philosophy',
+        'Master of Science',
+        'Bachelor of Science',
+        'Diploma',
+        'Certificate',
+    ];
+
     public function conferences(): BelongsToMany
     {
         return $this->belongsToMany(Conference::class);
+    }
+
+    public function Talks()
+    {
+        return $this->hasMany(Talk::class);
     }
 
     public static function getForm(): array
@@ -62,13 +75,7 @@ class Speaker extends Model
                 ->columnSpanFull(),
             Forms\Components\CheckboxList::make('qualifications')
                 ->columnSpanFull()
-                ->options([
-                    'PhD',
-                    'Masters',
-                    'Bachelors',
-                    'Diploma',
-                    'Certificate',
-                ])
+                ->options(self::QUALIFICATIONS)
                 ->columns(3)
                 ->searchable()
                 ->bulkToggleable()
