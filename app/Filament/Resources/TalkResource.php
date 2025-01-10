@@ -44,6 +44,8 @@ class TalkResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->persistFiltersInSession()
+            ->filtersTriggerAction(fn($action) => $action->button()->label('Filters'))
             ->columns([
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
@@ -64,9 +66,6 @@ class TalkResource extends Resource
                     ->sortable(),
                 Tables\Columns\ToggleColumn::make('new_talk'),
                 Tables\Columns\TextColumn::make('status')
-//                    ->format(function (Talk $record) {
-//                        return $record->status->value;
-//                    })
                     ->sortable()
                     ->searchable()
                     ->badge()
@@ -78,7 +77,18 @@ class TalkResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                Tables\Filters\TernaryFilter::make('new_talk')
+                    ->label('New Talk'),
+                Tables\Filters\SelectFilter::make('speaker')
+                    ->relationship('speaker', 'name')
+                    ->label('Speaker')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
+                Tables\Filters\Filter::make('has_avatar')
+                    ->label('Show only speakers with avatars')
+                    ->toggle()
+                    ->query(fn(Builder $query) => $query->whereHas('speaker', fn(Builder $query) => $query->whereNotNull('avatar'))),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
