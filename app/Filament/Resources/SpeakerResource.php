@@ -6,6 +6,11 @@ use App\Filament\Resources\SpeakerResource\Pages;
 use App\Filament\Resources\SpeakerResource\RelationManagers;
 use App\Models\Speaker;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -52,11 +57,53 @@ class SpeakerResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Personal Information')
+                    ->columns(3)
+                    ->schema([
+                        ImageEntry::make('avatar')
+                            ->circular(),
+                        Group::make()
+                            ->columnSpan(2)
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('name'),
+                                TextEntry::make('email'),
+                                TextEntry::make('twitter_handle')
+                                    ->label('Twitter')
+                                    ->getStateUsing(fn ($record) => '@'.$record->twitter_handle)
+//                                    ->formatStateUsing(fn (Speaker $speaker) => '@'.$speaker->twitter_handle)
+//                                    ->prefix('@')
+                                    ->url(fn (Speaker $speaker) => "https://twitter.com/{$speaker->twitter_handle}"),
+                                TextEntry::make('has_spoken')
+                                    ->getStateUsing(fn ($record) => $record->Talks->count() > 0 ? 'Previous Speaker' : 'Has not spoken')
+                                    ->label('Has Spoken at a Conference')
+                                    ->badge()
+                                    ->color(fn ($record) => $record->Talks->count() > 0 ? 'success' : 'danger')
+                            ])
+
+                    ]),
+                Section::make('Other Information')
+                    ->schema([
+                        TextEntry::make('bio')
+                            ->html()
+                            ->extraAttributes(['class' => 'prose dark:prose-invert']),
+                        TextEntry::make('qualifications')
+                            ->listWithLineBreaks()
+//                            ->bulleted()
+                    ]),
             ]);
     }
 
@@ -72,7 +119,7 @@ class SpeakerResource extends Resource
         return [
             'index' => Pages\ListSpeakers::route('/'),
             'create' => Pages\CreateSpeaker::route('/create'),
-            'edit' => Pages\EditSpeaker::route('/{record}/edit'),
+            'view' => Pages\ViewSpeaker::route('/{record}'),
         ];
     }
 }
