@@ -101,7 +101,7 @@ class SpeakerResource extends Resource
                             ->html()
                             ->extraAttributes(['class' => 'prose dark:prose-invert']),
                         TextEntry::make('qualifications')
-                            ->listWithLineBreaks()
+//                            ->listWithLineBreaks()
 //                            ->bulleted()
                     ]),
             ]);
@@ -110,7 +110,7 @@ class SpeakerResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\TalksRelationManager::make(),
         ];
     }
 

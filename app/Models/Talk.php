@@ -4,6 +4,10 @@ namespace App\Models;
 
 use App\Enums\TalkLength;
 use App\Enums\TalkStatus;
+use App\Filament\Resources\SpeakerResource\RelationManagers\TalksRelationManager;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -57,4 +61,24 @@ class Talk extends Model
 
         // Email the speaker to notify them that their talk has been approved.
     }
+
+    public static function getForm(): array
+    {
+        return [
+            TextInput::make('title')
+                ->required()
+                ->maxLength(255),
+            Textarea::make('abstract')
+                ->required()
+                ->columnSpanFull(),
+            Select::make('length')
+                ->options(TalkLength::class)
+                ->required(),
+            Select::make('speaker_id')
+                ->relationship('speaker', 'name')
+                ->required()
+                ->hiddenOn(TalksRelationManager::class),
+        ];
+    }
+
 }
