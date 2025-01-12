@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Awcodes\Shout\Components\Shout;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,8 +45,20 @@ class Attendee extends Model
             Group::make()
                 ->columns(2)
                 ->schema([
-                TextInput::make('name'),
-                TextInput::make('email')->email(),
+                    Shout::make('price')
+                        ->color('warning')
+//                        ->content('Ticket Price is high!')
+                        ->content(function (Get $get) {
+                            $price = $get('ticket_price');
+                            return 'This is ' . $price - 500 . ' more than the average ticket price.';
+                        })
+                        ->columnSpanFull()
+                        ->visible(function (Get $get) {
+                            return $get('ticket_price') > 500;
+                        }),
+                    TextInput::make('name'),
+                    TextInput::make('email')->email(),
+                    TextInput::make('ticket_price')->numeric()->lazy(),
             ])
         ];
     }
