@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\AttendeeResource\Pages;
 use App\Filament\Resources\AttendeeResource\RelationManagers;
+use App\Filament\Resources\AttendeeResource\Widgets\AttendeeChartWidget;
+use App\Filament\Resources\AttendeeResource\Widgets\AttendeeStats;
 use App\Models\Attendee;
 use Filament\Forms;
 use Filament\Forms\Components\TextInput;
@@ -30,7 +32,14 @@ class AttendeeResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('email')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('ticket_cost')->numeric()->searchable()->sortable(),
+                Tables\Columns\IconColumn::make('is_paid')->boolean(),
+                Tables\Columns\TextColumn::make('conference.name')->searchable()->sortable(),
+                Tables\Columns\TextColumn::make('created_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->sortable()->toggleable(isToggledHiddenByDefault: true),
+
             ])
             ->filters([
                 //
@@ -49,6 +58,14 @@ class AttendeeResource extends Resource
     {
         return [
             //
+        ];
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            AttendeeStats::class,
+            AttendeeChartWidget::class,
         ];
     }
 
